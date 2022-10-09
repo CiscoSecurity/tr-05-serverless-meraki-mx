@@ -1,0 +1,641 @@
+{
+  "data": [
+    {
+      "agentDetectionInfo": {
+        "accountId": "1469595929870590121",
+        "accountName": "Cisco Systems",
+        "agentDetectionState": null,
+        "agentDomain": "WORKGROUP",
+        "agentIpV4": "10.0.0.5",
+        "agentIpV6": "fe80::648b:1bb9:557:f5cd",
+        "agentLastLoggedInUpn": null,
+        "agentLastLoggedInUserMail": null,
+        "agentLastLoggedInUserName": "Sentinel",
+        "agentMitigationMode": "detect",
+        "agentOsName": "Windows 10 Enterprise Evaluation",
+        "agentOsRevision": "17763",
+        "agentRegisteredAt": "2022-08-03T13:14:10.346446Z",
+        "agentUuid": "1b02fca2a1bd47b5bd10d69a6b6401a5",
+        "agentVersion": "21.6.5.1072",
+        "cloudProviders": { },
+        "externalIp": "206.198.150.49",
+        "groupId": "1478941070465533333",
+        "groupName": "Default Group",
+        "siteId": "1478941070448756116",
+        "siteName": "Lockbit2.0 Malware Detonation"
+      },
+      "agentRealtimeInfo": {
+        "accountId": "1469595929870590121",
+        "accountName": "Cisco Systems",
+        "activeThreats": 0,
+        "agentComputerName": "Prod-Lckbit-477",
+        "agentDecommissionedAt": true,
+        "agentDomain": "WORKGROUP",
+        "agentId": "1478942211760818649",
+        "agentInfected": false,
+        "agentIsActive": false,
+        "agentIsDecommissioned": true,
+        "agentMachineType": "desktop",
+        "agentMitigationMode": "detect",
+        "agentNetworkStatus": "disconnecting",
+        "agentOsName": "Windows 10 Enterprise Evaluation",
+        "agentOsRevision": "17763",
+        "agentOsType": "windows",
+        "agentUuid": "1b02fca2a1bd47b5bd10d69a6b6401a5",
+        "agentVersion": "21.6.5.1072",
+        "groupId": "1478941070465533333",
+        "groupName": "Default Group",
+        "networkInterfaces": [
+          {
+            "id": "1478942211769207258",
+            "inet": [
+              "10.0.0.5"
+            ],
+            "inet6": [
+              "fe80::648b:1bb9:557:f5cd"
+            ],
+            "name": "Ethernet0",
+            "physical": "00:50:56:07:64:96"
+          }
+        ],
+        "operationalState": "na",
+        "rebootRequired": false,
+        "scanAbortedAt": null,
+        "scanFinishedAt": null,
+        "scanStartedAt": null,
+        "scanStatus": "none",
+        "siteId": "1478941070448756116",
+        "siteName": "Lockbit2.0 Malware Detonation",
+        "storageName": null,
+        "storageType": null,
+        "userActionsNeeded": [ ]
+      },
+      "containerInfo": {
+        "id": null,
+        "image": null,
+        "labels": null,
+        "name": null
+      },
+      "id": "1478943957790855909",
+      "indicators": [
+        {
+          "category": "Evasion",
+          "description": "Detected attempt to hide tracks of a process",
+          "ids": [
+            83
+          ],
+          "tactics": [
+            {
+              "name": "Defense Evasion",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1070/004/",
+                  "name": "T1070.004"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Evasion",
+          "description": "Suspicious SMB activity was detected",
+          "ids": [
+            127
+          ],
+          "tactics": [
+            {
+              "name": "Discovery",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1135/",
+                  "name": "T1135"
+                }
+              ]
+            },
+            {
+              "name": "Lateral Movement",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1021/002/",
+                  "name": "T1021.002"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Ransomware",
+          "description": "Behaves like ransomware",
+          "ids": [
+            55
+          ],
+          "tactics": [
+            {
+              "name": "Execution",
+              "source": "MITRE",
+              "techniques": [ ]
+            },
+            {
+              "name": "Impact",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1485/",
+                  "name": "T1485"
+                },
+                {
+                  "link": "https://attack.mitre.org/techniques/T1486/",
+                  "name": "T1486"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Ransomware",
+          "description": "Behaves like ransomware in its file operations",
+          "ids": [
+            109,
+            107
+          ],
+          "tactics": [
+            {
+              "name": "Impact",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1485/",
+                  "name": "T1485"
+                },
+                {
+                  "link": "https://attack.mitre.org/techniques/T1486/",
+                  "name": "T1486"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Ransomware",
+          "description": "Deletes shadow copy and encrypts files",
+          "ids": [
+            57
+          ],
+          "tactics": [
+            {
+              "name": "Execution",
+              "source": "MITRE",
+              "techniques": [ ]
+            },
+            {
+              "name": "Impact",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1485/",
+                  "name": "T1485"
+                },
+                {
+                  "link": "https://attack.mitre.org/techniques/T1486/",
+                  "name": "T1486"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Evasion",
+          "description": "Indirect command was executed",
+          "ids": [
+            427
+          ],
+          "tactics": [
+            {
+              "name": "Defense Evasion",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1218/",
+                  "name": "T1218"
+                },
+                {
+                  "link": "https://attack.mitre.org/techniques/T1202/",
+                  "name": "T1202"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Ransomware",
+          "description": "Deletes shadow copy",
+          "ids": [
+            56
+          ],
+          "tactics": [
+            {
+              "name": "Impact",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1490/",
+                  "name": "T1490"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Evasion",
+          "description": "Anti-debug technique was used",
+          "ids": [
+            97
+          ],
+          "tactics": [
+            {
+              "name": "Defense Evasion",
+              "source": "MITRE",
+              "techniques": [ ]
+            }
+          ]
+        },
+        {
+          "category": "General",
+          "description": "User logged on",
+          "ids": [
+            266
+          ],
+          "tactics": [
+            {
+              "name": "Persistence",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1078/",
+                  "name": "T1078"
+                }
+              ]
+            },
+            {
+              "name": "Defense Evasion",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1078/",
+                  "name": "T1078"
+                }
+              ]
+            },
+            {
+              "name": "Privilege Escalation",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1078/",
+                  "name": "T1078"
+                }
+              ]
+            },
+            {
+              "name": "Initial Access",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1078/",
+                  "name": "T1078"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Persistence",
+          "description": "Application registered itself to become persistent",
+          "ids": [
+            47
+          ],
+          "tactics": [
+            {
+              "name": "Persistence",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1547/001/",
+                  "name": "T1547.001"
+                }
+              ]
+            },
+            {
+              "name": "Privilege Escalation",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1547/001/",
+                  "name": "T1547.001"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "Persistence",
+          "description": "Application registered itself to become persistent via an autorun",
+          "ids": [
+            199
+          ],
+          "tactics": [
+            {
+              "name": "Persistence",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1547/001/",
+                  "name": "T1547.001"
+                }
+              ]
+            },
+            {
+              "name": "Privilege Escalation",
+              "source": "MITRE",
+              "techniques": [
+                {
+                  "link": "https://attack.mitre.org/techniques/T1547/001/",
+                  "name": "T1547.001"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "General",
+          "description": "Detected by the Static Engine",
+          "ids": [
+            43
+          ],
+          "tactics": [ ]
+        }
+      ],
+      "kubernetesInfo": {
+        "cluster": null,
+        "controllerKind": null,
+        "controllerLabels": null,
+        "controllerName": null,
+        "namespace": null,
+        "namespaceLabels": null,
+        "node": null,
+        "pod": null,
+        "podLabels": null
+      },
+      "mitigationStatus": [ ],
+      "threatInfo": {
+        "analystVerdict": "undefined",
+        "analystVerdictDescription": "Undefined",
+        "automaticallyResolved": true,
+        "browserType": null,
+        "certificateId": "",
+        "classification": "Ransomware",
+        "classificationSource": "Cloud",
+        "cloudFilesHashVerdict": "black",
+        "collectionId": "1454500607025154622",
+        "confidenceLevel": "malicious",
+        "createdAt": "2022-08-03T13:17:38.492566Z",
+        "detectionEngines": [
+          {
+            "key": "pre_execution",
+            "title": "On-Write Static AI"
+          }
+        ],
+        "detectionType": "dynamic",
+        "engines": [
+          "On-Write DFI"
+        ],
+        "externalTicketExists": false,
+        "externalTicketId": null,
+        "failedActions": false,
+        "fileExtension": "EXE",
+        "fileExtensionType": "Executable",
+        "filePath": "\\Device\\HarddiskVolume1\\Users\\Public\\LockBit.exe",
+        "fileSize": 149504,
+        "fileVerificationType": "NotSigned",
+        "identifiedAt": "2022-08-03T13:17:38.290000Z",
+        "incidentStatus": "resolved",
+        "incidentStatusDescription": "Resolved",
+        "initiatedBy": "agent_policy",
+        "initiatedByDescription": "Agent Policy",
+        "initiatingUserId": null,
+        "initiatingUsername": null,
+        "isFileless": false,
+        "isValidCertificate": false,
+        "maliciousProcessArguments": "",
+        "md5": null,
+        "mitigatedPreemptively": false,
+        "mitigationStatus": "not_mitigated",
+        "mitigationStatusDescription": "Not mitigated",
+        "originatorProcess": "skyrun64.exe",
+        "pendingActions": false,
+        "processUser": "PROD-LCKBIT-291\\Sentinel",
+        "publisherName": "",
+        "reachedEventsLimit": false,
+        "rebootRequired": false,
+        "sha1": "101b90ac7e0c2a8b570686c13dfa0e161ddd00e0",
+        "sha256": null,
+        "storyline": "029C19CB7D9E4B5B",
+        "threatId": "1478943957790855909",
+        "threatName": "LockBit.exe",
+        "updatedAt": "2022-08-29T13:29:56.808492Z"
+      },
+      "whiteningOptions": [
+        "path",
+        "hash"
+      ]
+    },
+    {
+      "agentDetectionInfo": {
+        "accountId": "1469595929870590121",
+        "accountName": "Cisco Systems",
+        "agentDetectionState": null,
+        "agentDomain": "WORKGROUP",
+        "agentIpV4": "10.0.0.5",
+        "agentIpV6": "fe80::648b:1bb9:557:f5cd",
+        "agentLastLoggedInUpn": null,
+        "agentLastLoggedInUserMail": null,
+        "agentLastLoggedInUserName": "Sentinel",
+        "agentMitigationMode": "detect",
+        "agentOsName": "Windows 10 Enterprise Evaluation",
+        "agentOsRevision": "17763",
+        "agentRegisteredAt": "2022-08-03T13:14:10.346446Z",
+        "agentUuid": "1b02fca2a1bd47b5bd10d69a6b6401a5",
+        "agentVersion": "21.6.5.1072",
+        "cloudProviders": { },
+        "externalIp": "206.198.150.49",
+        "groupId": "1478941070465533333",
+        "groupName": "Default Group",
+        "siteId": "1478941070448756116",
+        "siteName": "Lockbit2.0 Malware Detonation"
+      },
+      "agentRealtimeInfo": {
+        "accountId": "1469595929870590121",
+        "accountName": "Cisco Systems",
+        "activeThreats": 0,
+        "agentComputerName": "Prod-Lckbit-477",
+        "agentDecommissionedAt": true,
+        "agentDomain": "WORKGROUP",
+        "agentId": "1478942211760818649",
+        "agentInfected": false,
+        "agentIsActive": false,
+        "agentIsDecommissioned": true,
+        "agentMachineType": "desktop",
+        "agentMitigationMode": "detect",
+        "agentNetworkStatus": "disconnecting",
+        "agentOsName": "Windows 10 Enterprise Evaluation",
+        "agentOsRevision": "17763",
+        "agentOsType": "windows",
+        "agentUuid": "1b02fca2a1bd47b5bd10d69a6b6401a5",
+        "agentVersion": "21.6.5.1072",
+        "groupId": "1478941070465533333",
+        "groupName": "Default Group",
+        "networkInterfaces": [
+          {
+            "id": "1478942211769207258",
+            "inet": [
+              "10.0.0.5"
+            ],
+            "inet6": [
+              "fe80::648b:1bb9:557:f5cd"
+            ],
+            "name": "Ethernet0",
+            "physical": "00:50:56:07:64:96"
+          }
+        ],
+        "operationalState": "na",
+        "rebootRequired": false,
+        "scanAbortedAt": null,
+        "scanFinishedAt": null,
+        "scanStartedAt": null,
+        "scanStatus": "none",
+        "siteId": "1478941070448756116",
+        "siteName": "Lockbit2.0 Malware Detonation",
+        "storageName": null,
+        "storageType": null,
+        "userActionsNeeded": [ ]
+      },
+      "containerInfo": {
+        "id": null,
+        "image": null,
+        "labels": null,
+        "name": null
+      },
+      "id": "1478943990439318256",
+      "indicators": [
+        {
+          "category": "Hiding/Stealthiness",
+          "description": "The majority of sections in this PE have high entropy, a sign of obfuscation or packing",
+          "ids": [
+            29
+          ],
+          "tactics": [ ]
+        }
+      ],
+      "kubernetesInfo": {
+        "cluster": null,
+        "controllerKind": null,
+        "controllerLabels": null,
+        "controllerName": null,
+        "namespace": null,
+        "namespaceLabels": null,
+        "node": null,
+        "pod": null,
+        "podLabels": null
+      },
+      "mitigationStatus": [ ],
+      "threatInfo": {
+        "analystVerdict": "undefined",
+        "analystVerdictDescription": "Undefined",
+        "automaticallyResolved": true,
+        "browserType": null,
+        "certificateId": "",
+        "classification": "Ransomware",
+        "classificationSource": "Cloud",
+        "cloudFilesHashVerdict": "black",
+        "collectionId": "1454500607025154622",
+        "confidenceLevel": "malicious",
+        "createdAt": "2022-08-03T13:17:42.384913Z",
+        "detectionEngines": [
+          {
+            "key": "pre_execution",
+            "title": "On-Write Static AI"
+          }
+        ],
+        "detectionType": "static",
+        "engines": [
+          "On-Write DFI"
+        ],
+        "externalTicketExists": false,
+        "externalTicketId": null,
+        "failedActions": false,
+        "fileExtension": "EXE",
+        "fileExtensionType": "Executable",
+        "filePath": "\\Device\\HarddiskVolume1\\Users\\Public\\LockBit.exe",
+        "fileSize": 149504,
+        "fileVerificationType": "NotSigned",
+        "identifiedAt": "2022-08-03T13:17:42.222000Z",
+        "incidentStatus": "resolved",
+        "incidentStatusDescription": "Resolved",
+        "initiatedBy": "agent_policy",
+        "initiatedByDescription": "Agent Policy",
+        "initiatingUserId": null,
+        "initiatingUsername": null,
+        "isFileless": false,
+        "isValidCertificate": false,
+        "maliciousProcessArguments": null,
+        "md5": null,
+        "mitigatedPreemptively": false,
+        "mitigationStatus": "not_mitigated",
+        "mitigationStatusDescription": "Not mitigated",
+        "originatorProcess": "skyrun64.exe",
+        "pendingActions": false,
+        "processUser": "NT AUTHORITY\\SYSTEM",
+        "publisherName": "",
+        "reachedEventsLimit": false,
+        "rebootRequired": false,
+        "sha1": "101b90ac7e0c2a8b570686c13dfa0e161ddd00e0",
+        "sha256": null,
+        "storyline": "3CEE6CAF3A72B2CE",
+        "threatId": "1478943990439318256",
+        "threatName": "LockBit.exe",
+        "updatedAt": "2022-08-29T13:29:56.814275Z"
+      },
+      "whiteningOptions": [
+        "path",
+        "hash"
+      ]
+    }
+  ],
+  "pagination": {
+    "nextCursor": null,
+    "totalItems": 2
+  },
+  "malware": {
+    "origins": {
+      "external": {
+        "source": "reversingLabs",
+        "firstSeen": "2021-02-11T18:43:11Z",
+        "lastSeen": "2022-07-04T05:16:13Z",
+        "malwareType": "Ransomware",
+        "platform": "Win32",
+        "detectionCoverage": 96,
+        "family": [
+          "lockbit"
+        ]
+      }
+    },
+    "type": "sha1",
+    "sha1": "0x101B90AC7E0C2A8B570686C13DFA0E161DDD00E0",
+    "hash": "0x101B90AC7E0C2A8B570686C13DFA0E161DDD00E0",
+    "risk": "high"
+  },
+  "tags": [ ]
+}
