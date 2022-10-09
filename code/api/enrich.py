@@ -25,14 +25,9 @@ def observe_observables():
     for observable in observables:
         response = query_sightings(observable['value'], credentials)
         for event in response:
-            event_type = event.get('eventType')
-            if event_type == 'IDS Alert':
-                indicator = observable['value']
-                if (indicator in event.get('deviceMac')
-                    or indicator in event.get('clientMac') or indicator in get_ip(event.get('destIp'))
-                        or indicator in get_ip(event.get('srcIp'))):
-                    mapping = Mapping()
-                    g.sightings.append(mapping.sighting(observable, event))
+            indicator = observable['value']
+            mapping = Mapping()
+            g.sightings.append(mapping.sighting(observable, event))
 
     return jsonify_result()
 

@@ -94,12 +94,12 @@ def catch_errors(func):
 
 
 def get_ip(input):
-    if ':' not in input: return input
-    (ip, port, version) = parse_ip(input)    
+    if ':' not in input:
+        return input
+    (ip, port, version) = parse_ip(input)
     return ip
 
 
-    
 def parse_ip(input):
     ip, separator, port = input.rpartition(':')
     assert separator
@@ -115,14 +115,14 @@ def parse_proto(input):
     return l3_proto
 
 
-
 @catch_errors
 def query_sightings(observables, credentials):
     network_id = credentials.get('NETWORK_ID')
     api_key = credentials.get('API_KEY')
     entities_limit = credentials.get('CTR_ENTITIES_LIMIT')
 
-    url = "https://api.meraki.com/api/v1/organizations/%d/appliance/security/events?sortOrder=descending&perPage=%d" % (network_id, entities_limit)
+    url = "https://api.meraki.com/api/v1/organizations/%d/appliance/security/events?sortOrder=descending&perPage=%d" % (
+        network_id, entities_limit)
     payload = None
     headers = {
         "Content-Type": "application/json",
@@ -143,8 +143,10 @@ def query_sightings(observables, credentials):
             device_mac = record['deviceMac']
             client_mac = record['clientMac']
 
-            if indicator in device_mac or indicator in client_mac or indicator in dst_ip or indicator in src_ip:
-                results.append(record)
+            if (indicator in dst_ip
+                or indicator in src_ip
+                or indicator in device_mac
+                or indicator in client_mac): results.append(record)
 
         elif event_type == 'File Scanned':
             client_name = record['clientName']
@@ -156,11 +158,11 @@ def query_sightings(observables, credentials):
             file_type = record['fileType']
             canonical_name = record['canonicalName']
 
-            if (indicator in client_name or indicator in client_mac or
-                indicator in client_ip or indicator in dst_ip or indicator in src_ip or
-                indicator in canonical_name or indicator in file_hash):
+            if (indicator in dst_ip
+                or indicator in src_ip
+                or indicator in client_ip
+                or indicator in file_hash):
                 results.append(record)
-
 
     return results
 
