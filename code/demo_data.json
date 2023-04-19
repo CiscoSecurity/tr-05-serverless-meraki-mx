@@ -1,0 +1,75 @@
+[
+    {
+        "ts": "2023-04-05T10:44:29.837615Z",
+        "eventType": "IDS Alert",
+        "deviceMac": "ac:17:c8:c4:ed:13",
+        "clientMac": "00:0c:29:3b:64:48",
+        "srcIp": "175.45.176.200:49278",
+        "destIp": "192.168.201.90:80",
+        "protocol": "tcp/ip",
+        "priority": "1",
+        "classification": "12",
+        "blocked": true,
+        "message": "SERVER-WEBAPP Netgear DGN1000 series routers authentication bypass attempt",
+        "signature": "1:44687:3",
+        "sigSource": "",
+        "ruleId": "meraki:intrusion/snort/GID/1/SID/44687"
+    },
+    {
+        "ts": "2020-03-20T16:00:10.144989Z",
+        "eventType": "File Scanned",
+        "clientName": "COMPUTER-M-V78J",
+        "clientMac": "00:50:56:86:02:79",
+        "clientIp": "192.168.201.91",
+        "srcIp": "192.168.201.91",
+        "destIp": "175.45.176.200",
+        "protocol": "http",
+        "uri": "http://www.favorite-icons.com/program/FavoriteIconsUninstall.exe",
+        "canonicalName": "PUA.Win.Dropper.Kraddare::1201",
+        "destinationPort": 80,
+        "fileHash": "3ec1b9a95fe62aa25fc959643a0f227b76d253094681934daaf628d3574b3463",
+        "fileType": "MS_EXE",
+        "fileSizeBytes": 193688,
+        "disposition": "Malicious",
+        "action": "Blocked"
+    },
+    {
+        "occurredAt": "2023-04-03T01:58:42.994293Z",
+        "networkId": "L_569142402908950005",
+        "type": "nbar_block",
+        "description": "Layer 7 firewall rule",
+        "clientId": "k79d3ac",
+        "clientDescription": "firetv",
+        "clientMac": "08:12:a5:66:13:4d",
+        "category": "nbar",
+        "deviceSerial": "Q2GY-JVBV-75ZH",
+        "deviceName": "Home-MX",
+        "eventData": {
+            "Source IP": "192.168.1.153",
+            "Source Port": "34802",
+            "Destination IP": "175.45.176.201",
+            "Destination Port": "443",
+            "Protocol": "TCP",
+            "NBAR ID": "1486",
+            "Classification": "ESPN web browsing",
+            "Layer 7 firewall rule": "Deny"
+        }
+    },
+    {
+        "occurredAt": "2023-03-30T18:13:25.622394Z",
+        "networkId": "L_781937485300000000",
+        "type": "cf_block",
+        "description": "Content filtering blocked URL",
+        "clientId": "kca39e8",
+        "clientDescription": "MBP",
+        "clientMac": "00:50:56:86:d8:aa",
+        "category": "filtering",
+        "deviceSerial": "Q2MY-JCYP-AAAA",
+        "deviceName": "",
+        "eventData": {
+            "url": "http://www.match.com/",
+            "server": "175.45.176.201:80",
+            "categories": ""
+        }
+    }
+]

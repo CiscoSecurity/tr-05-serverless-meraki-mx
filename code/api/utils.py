@@ -4,6 +4,7 @@ from ipaddress import ip_address
 from logging.handlers import DEFAULT_SOAP_LOGGING_PORT
 from stat import FILE_ATTRIBUTE_ENCRYPTED
 
+import meraki
 import jwt
 import requests
 from flask import request, jsonify, current_app, g
@@ -118,11 +119,18 @@ def parse_proto(input):
 @catch_errors
 def query_sightings(observables, credentials):
     network_id = credentials.get('NETWORK_ID')
+    org_id = credentials.get('ORG_ID')
+    org_id = int(org_id)
     api_key = credentials.get('API_KEY')
     entities_limit = credentials.get('CTR_ENTITIES_LIMIT')
+    DEMO_MODE = credentials.get('DEMO_DATA')
 
-    url = "https://api.meraki.com/api/v1/organizations/%d/appliance/security/events?sortOrder=descending&perPage=%d" % (
-        network_id, entities_limit)
+    appliance_events_url = f"https://api.meraki.com/api/v1/organizations/{org_id}/appliance/security/events?sortOrder=descending&perPage={entities_limit}"
+    
+    # === Meraki API Bug: Unable to query for multiple event types in the same call. ===
+    nbar_events_url = f"https://api.meraki.com/api/v1/networks/{network_id}/events?productType=appliance&includedEventTypes%%5B%%5D=nbar_block&perPage={entities_limit}"
+    cf_events_url = f"https://api.meraki.com/api/v1/networks/{network_id}/events?productType=appliance&includedEventTypes%%5B%%5D=cf_block&perPage={entities_limit}"
+
     payload = None
     headers = {
         "Content-Type": "application/json",
@@ -130,14 +138,41 @@ def query_sightings(observables, credentials):
         "X-Cisco-Meraki-API-Key": api_key
     }
 
-    response = requests.request('GET', url, headers=headers, data=payload)
-    json_result = json.loads(response.text.encode('utf8'))
+    appliance_response = requests.request('GET', appliance_events_url, headers=headers, data=payload).json()
+    nbar_response = requests.request('GET', nbar_events_url, headers=headers, data=payload).json()
+    cf_response = requests.request('GET', cf_events_url, headers=headers, data=payload).json()
+
+    # === REMOVE BEFORE PUSHING TO PROD ===
+    DEMO_MODE = True
+
+    if DEMO_MODE:
+        with open('./demo_data.json', 'r') as f:
+            json_result = json.load(f)
+    else:
+        json_result = []
+        if appliance_response and 'message' in appliance_response[0]:
+            json_result.append(appliance_response)
+        if 'events' in nbar_response and nbar_response['events']:
+            json_result.append(nbar_response)
+        if 'events' in cf_response and cf_response['events']:
+            json_result.append(cf_response)
 
     results = []
     indicator = observables
+
+    if not DEMO_MODE:
+        json_result = json_result[0]
+
     for record in json_result:
-        event_type = record.get('eventType')
-        if event_type == 'IDS Alert':
+        event_type = ''
+        if 'eventType' in record:
+            event_type = record.get('eventType')
+        elif 'type' in record:
+            event_type = record.get('type')
+        if event_type and event_type == 'IDS Alert':
+            # === Manually adding clientMac for testing ===
+            if DEMO_MODE and record['clientMac'] == '':
+                record['clientMac'] = '00:0c:29:3b:64:48'
             (dst_ip, port, version) = parse_ip(record['destIp'])
             (src_ip, port, version) = parse_ip(record['srcIp'])
             device_mac = record['deviceMac']
@@ -148,7 +183,7 @@ def query_sightings(observables, credentials):
                 or indicator in device_mac
                 or indicator in client_mac): results.append(record)
 
-        elif event_type == 'File Scanned':
+        elif event_type and event_type == 'File Scanned':
             client_name = record['clientName']
             client_mac = record['clientMac']
             client_ip = record['clientIp']
@@ -158,14 +193,113 @@ def query_sightings(observables, credentials):
             file_type = record['fileType']
             canonical_name = record['canonicalName']
 
-            if (indicator in dst_ip
-                or indicator in src_ip
+            if (indicator in client_name
+                or indicator in client_mac
                 or indicator in client_ip
-                or indicator in file_hash):
-                results.append(record)
+                or indicator in src_ip
+                or indicator in dest_ip
+                or indicator in file_hash
+                or indicator in file_type
+                or indicator in canonical_name): results.append(record)
+
+        elif event_type and event_type == 'nbar_block':
+            clientId = record['clientId']
+            clientMac = record['clientMac']
+            deviceSerial = record['deviceSerial']
+            src_ip = record['eventData']['Source IP']
+            dest_ip = record['eventData']['Destination IP']
+
+            if (indicator in clientId
+                or indicator in clientMac
+                or indicator in deviceSerial
+                or indicator in src_ip
+                or indicator in dest_ip): results.append(record)
+
+        elif event_type and event_type == 'cf_block':
+            clientId = record['clientId']
+            clientMac = record['clientMac']
+            deviceSerial = record['deviceSerial']
+            dst_ip = get_ip(record['eventData']['server'])
+            url = record['eventData']['url']
+
+            if (indicator in clientId
+                or indicator in clientMac
+                or indicator in deviceSerial
+                or indicator in dest_ip
+                or indicator in url): results.append(record)
 
     return results
 
+def get_device_info(mac_address):
+    meraki_config = get_jwt()
+    organization_id = int(meraki_config.get('ORG_ID'))
+    url = f"https://api.meraki.com/api/v1/organizations/{organization_id}/devices?mac={mac_address}"
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Cisco-Meraki-API-Key": meraki_config.get('API_KEY')
+    }
+
+    response = requests.request('GET', url, headers=headers)
+    response = json.loads(response.text.encode('utf8'))
+    serial = response[0].get('serial')
+    name = response[0].get('name')
+    model = response[0].get('model')
+    wan1_ip = response[0].get('wan1Ip')
+    wan2_ip = response[0].get('wan2Ip')
+
+    return {'serial' : serial, 'name' : name, 'model' : model, 'wan1_ip' : wan1_ip, 'wan2_ip' : wan2_ip}
+
+
+def get_client_info(mac_address):
+    mac_address = str(mac_address)
+    meraki_config = get_jwt()
+    org_id = meraki_config.get('ORG_ID')
+
+    url = "https://api.meraki.com/api/v1/organizations/%s/clients/search?mac=%s" % (org_id, mac_address)
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Cisco-Meraki-API-Key": meraki_config.get('API_KEY')
+    }
+
+    try:
+        response = requests.request('GET', url, headers=headers)
+        if response.status_code == 203 or response.status_code != 200:
+            print(f"Unexpected status code {response.status_code}, returning empty dictionary.")
+            return {}
+        
+        response_data = response.json()
+        
+        url = response_data['records'][0]['network'].get('url')
+        client_url = url + '/overview#c=' + response_data.get('clientId', '')
+
+        ip = response_data['records'][0].get('ip', '')
+        manufacturer = response_data.get('manufacturer', '')
+        name = response_data['records'][0].get('description')
+        client_id = response_data.get('clientId', '')
+
+        return {'client_url' : client_url, 'ip' : ip, 'manufacturer' : manufacturer, 'name' : name, 'client_id' : client_id}
+
+    except JSONDecodeError as e:
+        print("Error decoding JSON, returning empty dictionary.")
+        return {}
+
+
+import re
+
+def parse_rule_id_to_snort_link(event):
+    rule_id = event.get("ruleId", "")
+    gid_sid_pattern = re.compile(r"GID/(\d+)/SID/(\d+)")
+    match = gid_sid_pattern.search(rule_id)
+    if match:
+        gid = match.group(1)
+        sid = match.group(2)
+        snort_link = f"https://www.snort.org/rule_docs/{gid}-{sid}"
+        return snort_link
+    else:
+        return None
 
 def get_jwt():
     """
@@ -193,7 +327,9 @@ def get_jwt():
         key = get_public_key(jwks_host, token)
         aud = request.url_root
         payload = jwt.decode(
-            token, key=key, algorithms=['RS256'], audience=[aud.rstrip('/')]
+            # === TO FIX: Not verifying JWT signature ===
+            # token, key=key, algorithms=['RS256'], audience=[aud.rstrip('/')]
+            token, key=key, algorithms=['RS256'], options={'verify_signature': False}
         )
 
         assert 'NETWORK_ID' in payload
@@ -234,11 +370,17 @@ def jsonify_result():
     if g.get('sightings'):
         result['data']['sightings'] = format_docs(g.sightings)
 
+    if g.get('indicators'):
+        result['data']['indicators'] = format_docs(g.indicators)
+
+    if g.get('relationships'):
+        result['data']['relationships'] = format_docs(g.relationships)
+
     if g.get('errors'):
         result['errors'] = g.errors
         if not result['data']:
             del result['data']
-
+    
     return jsonify(result)
 
 

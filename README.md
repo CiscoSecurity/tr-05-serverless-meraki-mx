@@ -1,34 +1,92 @@
 [![Gitter Chat](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg)](https://gitter.im/CiscoSecurity/Threat-Response "Gitter Chat")
 
-# Docker Relay Template (Cisco Hosted)
+# Meraki Relay Module for SecureX/XDR
 
-Generic Docker Relay template not bound to any real third-party Cyber Threat
-Intelligence service provider.
+### Developed By
 
-**NOTE.** The template aims to show the general structure for future
-implementations. It also provides a couple of utility functions that might be
-handy. Keep in mind that the main idea here is to just give you a hint of a
-possible approach rather than enforcing you to do everything exactly the same
-way.
+Trey Everson, Mark Orszycki, Jordan Gumby, and Nathan Morgan - Associate Systems Engineers @ Cisco
 
-The Relay itself is just a simple application written in Python that can be
-easily packaged and deployed in docker container.
+## Introduction
 
-## Rationale
+This project provides a Meraki relay module for SecureX/XDR. It takes event data from the Meraki dashboard and converts it into the Cisco Threat Intelligence Model (CTIM) while using the Meraki API to enrich the sighting with additional data.
 
-- We need an application that will translate API requests from SecureX Threat Response to the third-party integration, and vice versa.
-- We need an application that can be completely self contained within a virtualized container using Docker.
+The module is built using Python 3.11.2 and includes a demo data feature.
+
+### Implemented Relay Endpoints
+- Meraki MX Security Appliance
+
+### Supported Types of Observables
+- IP Address
+- MAC Address
+- Serial Number
+- URL
+- File Hash
+- File Type
+- File Canonical Name
+
+## Installation and Setup
+
+Follow these steps to set up the Meraki relay module:
+
+1. Clone the repository onto your local machine:
+
+    `git clone <repo_url>`
+
+2. Install dependencies using `pipenv`. If you don't have `pipenv` installed, you can install it using the following command:
+
+    `pip install pipenv`
+
+    Then, navigate to the project directory and install packages from the `Pipfile`:
+    ```
+    cd <project_directory>
+    pip install --no-cache-dir --upgrade pipenv && pipenv install --dev
+    ```
+    Enter the virtual environment by running:
+    `pipenv shell`
+
+    **Note**: In some cases, certain packages may not install. If this occurs, use `pip` to install them. Some common packages that may fail to install include `flask`, `jwt`, `requests`, `pyjwt`, and `marshmallow`.
+
+4. Run Flask App:
+    ```
+    cd code
+    python app.py
+    ```
+
+3. Install `ngrok` using `pip`:
+    `pip install ngrok`
+
+4. Start an `ngrok` tunnel with the following command:
+    `ngrok http http://127.0.0.1:5000`
+
+5. Copy the `ngrok` public URL into `module_template.json` under the `properties/url` variable.
+
+6. Create a new module in your SecureX/XDR organization by navigating to [this URL](https://visibility.amp.cisco.com/iroh/iroh-int/index.html#/ModuleType/post_iroh_iroh_int_module_type) and pasting in the `module_template.json` from the root of the git repository.
+    **Note**: You will need to be authorized into your organization. Ensure you authenticate by clicking the 'authorize' button in the top right of the window.
+
+7. Once the module type is posted, integrate it by supplying the necessary information in SecureX/XDR, such as:
+
+    - Meraki API key
+    - Org ID
+    - Network ID
+    - Entity limit (keep below 20)
+    - Demo mode (true/false)
+
+8. You should now be able to run an investigation. If demo mode is selected, you can supply your own demo data or use the provided data and run an investigation on the source/destination IP, MAC, filehash, etc.
+
+## Limitations
+
+- **Meraki API limitation**: When enriching sightings with more information, we obtain some data from the `getOrganizationDevices` and `getOrganizationClientsSearch` APIs. Currently, we make a request per device. We are developing an updated version that will call the API once and save the output to be queried locally instead.
+- **Meraki API limitation**: We have implemented two Meraki APIs to get events (`getNetworkEvents` and `getNetworkApplianceSecurityEvents`). These APIs only allow querying one event type, so we must make three calls to get events. This bug has been reported to the Meraki API team.
+- Some refer actions may not populate correctly if the device is not within the network.
+- Some packages may not install through `pipenv` for an unknown reason. We may transition to using a `requirements.txt` file with `pip` in the future.
+- Currently not verifying JWT audience token because we are hosting locally. When hosted on `visibility.amp.cisco.com` we will be able to verify.
+
 
 ## Testing (Optional)
 
 Open the code folder in your terminal.
 ```
 cd code
-```
-
-If you want to test the application you have to install dependencies from the [Pipfile](code/Pipfile) file:
-```
-pip install --no-cache-dir --upgrade pipenv && pipenv install --dev
 ```
 
 You can perform two kinds of testing:
@@ -41,47 +99,3 @@ You can perform two kinds of testing:
 - Run the suite of unit tests and measure the code coverage:
 
   `coverage run --source api/ -m pytest --verbose tests/unit/ && coverage report`
-
-### Building the Docker Container
-In order to build the application, we need to use a `Dockerfile`.  
-
- 1. Open a terminal.  Build the container image using the `docker build` command.
-
-```
-docker build -t tr-05-docker-relay .
-```
-
- 2. Once the container is built, and an image is successfully created, start your container using the `docker run` command and specify the name of the image we have just created.  By default, the container will listen for HTTP requests using port 9090.
-
-```
-docker run -dp 9090:9090 --name tr-05-docker-relay tr-05-docker-relay
-```
-
- 3. Watch the container logs to ensure it starts correctly.
-
-```
-docker logs tr-05-docker-relay
-```
-
- 4. Once the container has started correctly, open your web browser to http://localhost:9090.  You should see a response from the container.
-
-```
-curl http://localhost:9090
-```
-
-## Implementation Details
-
-This application was developed and tested under Python version 3.9.
-
-**NOTE.** Remember that this application is just a template so here `N/A` means
-that it has no implemented Relay endpoints and supported types of observables.
-That will not be the case for real integrations with third-party services so
-you may consider the following sections as some placeholders.
-
-### Implemented Relay Endpoints
-
-`N/A`
-
-### Supported Types of Observables
-
-`N/A`
