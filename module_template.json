@@ -1,0 +1,79 @@
+{
+    "title": "Meraki Security Events Module",
+    "default_name": "Meraki Security Events",
+    "short_description": "This is a Relay Module that brings in Meraki Events to enrich XDR Investigations.",
+    "description": "This is a Relay Module that brings in Meraki Events to enrich XDR Investigations.\n\nEvent types supported: \n- IDS Alert\n- File Scanned\n- Network Based Application Recognition Block\n- Content Filtering Block\n\nThis module has all of the Relay API endpoints enabled:\n- /health\n- /observe/observables\n- /refer/observables\n- tiles\n- tiles/tile\n- tiles/tile-data",
+    "tips": "When configuring Meraki Relay integration, you must first deploy the Meraki Relay Template (module_template.json) and then add the Meraki Relay integration module in SecureX/XDR.\n\n1. Deploy the Meraki Relay Template.\n\n2. In SecureX, complete the **Add New Relay Integration Module** form:\n    - **Integration Module Name** - Leave the default name or enter a name that is meaningful to you.\n    - **Supply Meraki API Key** - Provide your Meraki Dashboard API Key\n    - **Supply Meraki Network ID** - Provide your Meraki Network ID\n    - **Supply Meraki Org ID** - Provide your Meraki Organization ID\n    - **Opt In/Out of Demo Data** - Boolean value to designate whether you want to see demo data or use data from your Meraki instance.\n\n3. Click **Save** to complete the Meraki Serverless Relay integration module configuration.",
+    "external_references": [],
+    "configuration_spec": [
+        {
+            "key": "custom_API_KEY",
+            "required": true,
+            "type": "api_key",
+            "label": "Meraki API Key"
+        },
+        {
+            "key": "custom_NETWORK_ID",
+            "required": true,
+            "type": "string",
+            "label": "Meraki Network ID (Example: N_123456789123456789)"
+        },
+        {
+            "key": "custom_ORG_ID",
+            "required": true,
+            "type": "string",
+            "label": "Meraki Organiational ID"
+        },
+        {
+            "key": "custom_CTR_ENTITIES_LIMIT",
+            "required": false,
+            "type": "integer",
+            "label": "Entities Limit",
+            "tooltip": "Restricts the maximum number of `Sightings`, `Indicators` and `Judgements`"
+        },
+        {
+            "key": "custom_DEMO_DATA",
+            "type": "boolean",
+            "label": "Populate with Demo Data",
+            "tooltip": "We have included demo data to demonstrate the functionality of this module. If selected, launch an investigation on the IP \"175.45.176.200\" to view IDS Alert and File Scanned, investigate \"175.45.176.201\" to view NBAR and CF Block.",
+            "required": false
+        }
+    ],
+    "capabilities": [
+        {
+            "id": "health",
+            "description": "Healthcheck"
+        },
+        {
+            "id": "observe",
+            "description": "Enrichments"
+        },
+        {
+            "id": "refer",
+            "description": "Refer"
+        },
+        {
+            "id": "tiles",
+            "description": "Tiles"
+        }
+    ],
+    "properties": {
+        "supported-apis": [
+            "health",
+            "observe/observables",
+            "refer/observables",
+            "tiles",
+            "tiles/tile",
+            "tiles/tile-data"
+        ],
+        "auth-type": "configuration-token",
+        "url": "YOUR_NGROK_URL_HERE",
+        "configuration-token-alg": "RS256",
+        "configuration-token-audience": "https://ngrok.io",
+        "custom_jwks_host": "visibility.amp.cisco.com"
+    },
+    "flags": [
+        ""
+    ],
+    "logo": "data:image/svg+xml;base64,PHN2ZyBkYXRhLW5hbWU9IkxheWVyIDEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDM0IDMyIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImEiPjxwYXRoIGQ9Ik0xNDEwLjUtMjQ0LjJhMS40IDEuNCAwIDAgMC0xLjQgMS40IDEuNCAxLjQgMCAwIDAgMS40IDEuNCAxLjUgMS41IDAgMCAwIDEuNS0xLjQgMS41IDEuNSAwIDAgMC0xLjUtMS40Wm0tLjEtLjhhNS43IDUuNyAwIDAgMSA0LjEgMi4xIDUuMyA1LjMgMCAwIDEtNC4xIDIuMiA1LjIgNS4yIDAgMCAxLTQtMi4yIDUuNiA1LjYgMCAwIDEgNC0yLjFaIiBmaWxsPSIjNzMyNzc1IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYiI+PHBhdGggZD0iTTIyLjQtMjM5LjJhMy4yIDMuMiAwIDAgMC0zLjIgMy4yIDMuMyAzLjMgMCAwIDAgMy4yIDMuMiAzLjIgMy4yIDAgMCAwIDMuMi0zLjIgMy4yIDMuMiAwIDAgMC0zLjItMy4yWm0wLTFhNC4yIDQuMiAwIDAgMSA0LjIgNC4yIDQuNSA0LjUgMCAwIDEtLjkgMi41bDMuNSAzLjYtLjcuNi0zLjUtMy41YTMuOSAzLjkgMCAwIDEtMi42LjkgNC4xIDQuMSAwIDAgMS00LjEtNC4xIDQuMiA0LjIgMCAwIDEgNC4xLTQuMloiIGZpbGw9IiNmZmYiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIGQ9Ik0xNDEwLjUtMjQ0LjJhMS40IDEuNCAwIDAgMC0xLjQgMS40IDEuNCAxLjQgMCAwIDAgMS40IDEuNCAxLjUgMS41IDAgMCAwIDEuNS0xLjQgMS41IDEuNSAwIDAgMC0xLjUtMS40Wm0tLjEtLjhhNS43IDUuNyAwIDAgMSA0LjEgMi4xIDUuMyA1LjMgMCAwIDEtNC4xIDIuMiA1LjIgNS4yIDAgMCAxLTQtMi4yIDUuNiA1LjYgMCAwIDEgNC0yLjFaIiBmaWxsPSIjNzMyNzc1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48ZyBjbGlwLXBhdGg9InVybCgjYSkiPjxwYXRoIGZpbGw9IiM3MzI3NzUiIGQ9Ik0tNTU0LjUtMzgzLjJoMjI5MHY5MjJoLTIyOTB6Ii8+PC9nPjxwYXRoIGQ9Ik0yMi40LTIzOS4yYTMuMiAzLjIgMCAwIDAtMy4yIDMuMiAzLjMgMy4zIDAgMCAwIDMuMiAzLjIgMy4yIDMuMiAwIDAgMCAzLjItMy4yIDMuMiAzLjIgMCAwIDAtMy4yLTMuMlptMC0xYTQuMiA0LjIgMCAwIDEgNC4yIDQuMiA0LjUgNC41IDAgMCAxLS45IDIuNWwzLjUgMy42LS43LjYtMy41LTMuNWEzLjkgMy45IDAgMCAxLTIuNi45IDQuMSA0LjEgMCAwIDEtNC4xLTQuMSA0LjIgNC4yIDAgMCAxIDQuMS00LjJaIiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48ZyBjbGlwLXBhdGg9InVybCgjYikiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tMTMxNC41LTMzMS4zaDE1NTh2NjI3LjI3aC0xNTU4eiIvPjwvZz48cGF0aCBmaWxsPSIjNTZiODQ3IiBkPSJNMCAwaDM0LjF2MzEuOTRIMHoiLz48cGF0aCBkPSJNMTcuOCAyMS42aC0xLjRMMTIgMTAuN3YxMC45aC0xLjNWOC43aDJMMTcuMSAyMGw0LjItMTEuM2gxLjl2MTIuOWgtMS40VjEwLjhaIiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+}
