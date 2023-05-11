@@ -8,7 +8,7 @@ import dateutil.parser
 #from .. import config
 
 meraki_base_url = "https://api.meraki.com/api/v1"
-meraki_user_agent = "threat-response-module"
+meraki_user_agent = "MerakiRelayModuleForCiscoXDR Cisco"
 
 tiles_api = Blueprint('tiles', __name__)
 dashboard_api = Blueprint('dashboard', __name__)
