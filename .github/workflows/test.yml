@@ -1,0 +1,28 @@
+name: Pipenv Install and Test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  unittests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python, pipenv and Pipfile packages
+        uses: palewire/install-python-pipenv-pipfile@v4
+        with:
+          python-version: 3.11
+
+      - name: Run tests
+        run: |
+          pipenv install --dev
+          cd code/
+          pipenv run coverage run --source api/ -m pytest --verbose tests/unit/
+          pipenv run coverage report --fail-under=80
+
+      - name: Run pip-audit
+        run: pipenv run pip-audit
