@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 120
+exclude = */payloads_for_tests.py
+per-file-ignores =
+    code/api/__init__.py:E402,F401
+    code/api/mapping/__init__.py:E402,F401
+    code/api/transformations/__init__.py:E402,F401

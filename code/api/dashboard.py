@@ -1,34 +1,38 @@
-from functools import partial
+import datetime
+
+import dateutil.parser
 import meraki
 from flask import Blueprint, request
-from .schemas import ObservableSchema
-from .utils import get_json, get_jwt, jsonify_data
-import datetime
-import dateutil.parser
-#from .. import config
+
+from .utils import get_jwt, jsonify_data
 
 meraki_base_url = "https://api.meraki.com/api/v1"
 meraki_user_agent = "threat-response-module"
 
-tiles_api = Blueprint('tiles', __name__)
-dashboard_api = Blueprint('dashboard', __name__)
+tiles_api = Blueprint("tiles", __name__)
+dashboard_api = Blueprint("dashboard", __name__)
+
 
 def get_tile_data_definition(tile_id, timespan=None):
     in_vals = get_jwt()
     in_list = in_vals
-    
 
     if tile_id == "meraki_device_summary":
-        dashboard = meraki.DashboardAPI(base_url=meraki_base_url, api_key=in_list["API_KEY"], print_console=False,
-                                        output_log=False,
-                                        caller=meraki_user_agent, suppress_logging=True)
+        dashboard = meraki.DashboardAPI(
+            base_url=meraki_base_url,
+            api_key=in_list["API_KEY"],
+            print_console=False,
+            output_log=False,
+            caller=meraki_user_agent,
+            suppress_logging=True,
+        )
 
         dev_stat = dashboard.organizations.getOrganizationDevicesStatuses(in_list["ORG_ID"], total_pages=10)
 
         tile_data = [
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Total Devices"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Online Devices"},
-            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Offline Devices"}
+            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Offline Devices"},
         ]
         for d in dev_stat:
             tile_data[0]["value"] += 1
@@ -39,20 +43,30 @@ def get_tile_data_definition(tile_id, timespan=None):
 
         return tile_data, None
     elif tile_id == "meraki_device_summary_by_type":
-        dashboard = meraki.DashboardAPI(base_url=meraki_base_url, api_key=in_list["API_KEY"], print_console=False,
-                                        output_log=False,
-                                        caller=meraki_user_agent, suppress_logging=True)
+        dashboard = meraki.DashboardAPI(
+            base_url=meraki_base_url,
+            api_key=in_list["API_KEY"],
+            print_console=False,
+            output_log=False,
+            caller=meraki_user_agent,
+            suppress_logging=True,
+        )
 
         dev_stat = dashboard.organizations.getOrganizationDevices(in_list["ORG_ID"])
 
         tile_data = [
-            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Cellular Gateways"},
+            {
+                "value": 0,
+                "icon": "device-type",
+                "link_uri": "https://dashboard.meraki.com",
+                "label": "Cellular Gateways",
+            },
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Appliances"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Switches"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Access Points"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Cameras"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Sensors"},
-            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Other"}
+            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Other"},
         ]
         for d in dev_stat:
             if d["model"][:2] == "MG":
@@ -72,9 +86,14 @@ def get_tile_data_definition(tile_id, timespan=None):
 
         return tile_data, None
     elif tile_id == "meraki_device_bar_chart":
-        dashboard = meraki.DashboardAPI(base_url=meraki_base_url, api_key=in_list["API_KEY"], print_console=False,
-                                        output_log=False,
-                                        caller=meraki_user_agent, suppress_logging=True)
+        dashboard = meraki.DashboardAPI(
+            base_url=meraki_base_url,
+            api_key=in_list["API_KEY"],
+            print_console=False,
+            output_log=False,
+            caller=meraki_user_agent,
+            suppress_logging=True,
+        )
 
         dev_stat = dashboard.organizations.getOrganizationDevicesStatuses(in_list["ORG_ID"], total_pages=10)
         dev_list = dashboard.organizations.getOrganizationDevices(in_list["ORG_ID"])
@@ -82,7 +101,7 @@ def get_tile_data_definition(tile_id, timespan=None):
         tile_extras = {
             "keys": [
                 {"key": "device_online", "label": "Devices Online"},
-                {"key": "device_offline", "label": "Devices Offline"}
+                {"key": "device_offline", "label": "Devices Offline"},
             ],
             "key_type": "string",
         }
@@ -106,44 +125,50 @@ def get_tile_data_definition(tile_id, timespan=None):
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "MX",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "MS",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "MR",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "MV",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "MT",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }, {
+                ],
+            },
+            {
                 "key": "Other",
                 "values": [
                     {"key": "device_online", "value": 0, "tooltip": "Devices Online: 0"},
                     {"key": "device_offline", "value": 0, "tooltip": "Devices Offline: 0"},
-                ]
-            }
+                ],
+            },
         ]
 
         for d in devices:
@@ -204,20 +229,27 @@ def get_tile_data_definition(tile_id, timespan=None):
 
         return tile_data, tile_extras
     elif tile_id == "meraki_security_events":
-        dashboard = meraki.DashboardAPI(base_url=meraki_base_url, api_key=in_list["API_KEY"], print_console=False,
-                                        output_log=False,
-                                        caller=meraki_user_agent, suppress_logging=True)
+        dashboard = meraki.DashboardAPI(
+            base_url=meraki_base_url,
+            api_key=in_list["API_KEY"],
+            print_console=False,
+            output_log=False,
+            caller=meraki_user_agent,
+            suppress_logging=True,
+        )
 
         ct = datetime.datetime.utcnow()
-        start_time = (ct + datetime.timedelta(hours=-1)).isoformat() + 'Z'
-        end_time = ct.isoformat() + 'Z'
-        dev_stat = dashboard.appliance.getOrganizationApplianceSecurityEvents(in_list["ORG_ID"], total_pages=10, sortOrder="descending", perPage=1000, t0=start_time, t1=end_time)
+        start_time = (ct + datetime.timedelta(hours=-1)).isoformat() + "Z"
+        end_time = ct.isoformat() + "Z"
+        dev_stat = dashboard.appliance.getOrganizationApplianceSecurityEvents(
+            in_list["ORG_ID"], total_pages=10, sortOrder="descending", perPage=1000, t0=start_time, t1=end_time
+        )
 
         tile_data = [
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Total Events"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "IDS/IPS Events"},
             {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Malware Events"},
-            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Other"}
+            {"value": 0, "icon": "device-type", "link_uri": "https://dashboard.meraki.com", "label": "Other"},
         ]
         for d in dev_stat:
             tile_data[0]["value"] += 1
@@ -233,9 +265,14 @@ def get_tile_data_definition(tile_id, timespan=None):
 
         return tile_data, None
     elif tile_id == "meraki_security_events_chart":
-        dashboard = meraki.DashboardAPI(base_url=meraki_base_url, api_key=in_list["API_KEY"], print_console=False,
-                                        output_log=False,
-                                        caller=meraki_user_agent, suppress_logging=True)
+        dashboard = meraki.DashboardAPI(
+            base_url=meraki_base_url,
+            api_key=in_list["API_KEY"],
+            print_console=False,
+            output_log=False,
+            caller=meraki_user_agent,
+            suppress_logging=True,
+        )
 
         ct = datetime.datetime.utcnow()
         if timespan == "last_hour":
@@ -268,15 +305,17 @@ def get_tile_data_definition(tile_id, timespan=None):
             chart_range = "hours"
 
         start_time_obj = ct + datetime.timedelta(hours=delta)
-        start_time = start_time_obj.isoformat() + 'Z'
-        end_time = ct.isoformat() + 'Z'
-        dev_stat = dashboard.appliance.getOrganizationApplianceSecurityEvents(in_list["ORG_ID"], total_pages=2, sortOrder="descending", perPage=1000, t0=start_time, t1=end_time)
+        start_time = start_time_obj.isoformat() + "Z"
+        end_time = ct.isoformat() + "Z"
+        dev_stat = dashboard.appliance.getOrganizationApplianceSecurityEvents(
+            in_list["ORG_ID"], total_pages=2, sortOrder="descending", perPage=1000, t0=start_time, t1=end_time
+        )
 
         tile_extras = {
             "keys": [
                 {"key": "event_ids", "label": "IDS/IPS Events"},
                 {"key": "event_amp", "label": "Malware Events"},
-                {"key": "event_unk", "label": "Unknown Events"}
+                {"key": "event_unk", "label": "Unknown Events"},
             ],
             "key_type": "string",
         }
@@ -301,8 +340,8 @@ def get_tile_data_definition(tile_id, timespan=None):
                     "values": [
                         {"key": "event_ids", "value": 0, "tooltip": "IDS/IPS Events: 0"},
                         {"key": "event_amp", "value": 0, "tooltip": "Malware Events: 0"},
-                        {"key": "event_unk", "value": 0, "tooltip": "Unknown Events: 0"}
-                    ]
+                        {"key": "event_unk", "value": 0, "tooltip": "Unknown Events: 0"},
+                    ],
                 }
             )
         ts_increments.append(ct)
@@ -315,19 +354,23 @@ def get_tile_data_definition(tile_id, timespan=None):
                 if ts_obj > ts_increments[increment] and ts_obj < ts_increments[increment + 1]:
                     if ev_type == "IDS Alert":
                         tile_data[increment]["values"][0]["value"] += 1
-                        tile_data[increment]["values"][0]["tooltip"] = "IDS/IPS Events: " + str(tile_data[increment]["values"][0]["value"])
+                        tile_data[increment]["values"][0]["tooltip"] = "IDS/IPS Events: " + str(
+                            tile_data[increment]["values"][0]["value"]
+                        )
                     elif ev_type == "File Scanned":
                         tile_data[increment]["values"][1]["value"] += 1
-                        tile_data[increment]["values"][1]["tooltip"] = "Malware Events: " + str(tile_data[increment]["values"][1]["value"])
+                        tile_data[increment]["values"][1]["tooltip"] = "Malware Events: " + str(
+                            tile_data[increment]["values"][1]["value"]
+                        )
                     else:
                         tile_data[increment]["values"][2]["value"] += 1
-                        tile_data[increment]["values"][2]["tooltip"] = "Unknown Events: " + str(tile_data[increment]["values"][2]["value"])
+                        tile_data[increment]["values"][2]["tooltip"] = "Unknown Events: " + str(
+                            tile_data[increment]["values"][2]["value"]
+                        )
 
         return tile_data, tile_extras
     elif tile_id == "server_image":
-        tile_data = [
-            "![image](https://51e372f4310f.ngrok.io/static/server.png)"
-        ]
+        tile_data = ["![image](https://51e372f4310f.ngrok.io/static/server.png)"]
         return tile_data, None
     elif tile_id == "server_summary":
         tile_data = [
@@ -378,78 +421,58 @@ def get_tile_data_definition(tile_id, timespan=None):
 def get_tile_definition(tile_id):
     if tile_id == "meraki_device_summary":
         return {
-            "description": "Meraki Device Status Summary provides an overview of the state of all of your configured devices from within the SecureX platform.",
-            "periods": [
-                "last_hour"
-            ],
-            "tags": [
-                "Meraki"
-            ],
+            "description": "Meraki Device Status Summary provides an overview of the state "
+            "of all of your configured devices from within the SecureX platform.",
+            "periods": ["last_hour"],
+            "tags": ["Meraki"],
             "type": "metric_group",
             "short_description": "Meraki Device Status Summary",
             "title": "Meraki Device Summary",
-            "id": "meraki_device_summary"
+            "id": "meraki_device_summary",
         }
     elif tile_id == "meraki_device_summary_by_type":
         return {
-            "description": "Meraki Device Type Summary provides an overview of the state of all of your configured devices from within the SecureX platform.",
-            "periods": [
-                "last_hour"
-            ],
-            "tags": [
-                "Meraki"
-            ],
+            "description": "Meraki Device Type Summary provides an overview of the state "
+            "of all of your configured devices from within the SecureX platform.",
+            "periods": ["last_hour"],
+            "tags": ["Meraki"],
             "type": "metric_group",
             "short_description": "Meraki Device Type Summary",
             "title": "Meraki Device Type Summary",
-            "id": "meraki_device_summary_by_type"
+            "id": "meraki_device_summary_by_type",
         }
     elif tile_id == "meraki_device_bar_chart":
         return {
-            "description": "Meraki Device Summary provides an overview of the state of all of your configured devices from within the SecureX platform.",
-            "periods": [
-                "last_hour"
-            ],
-            "tags": [
-                "Meraki"
-            ],
+            "description": "Meraki Device Summary provides an overview of the state "
+            "of all of your configured devices from within the SecureX platform.",
+            "periods": ["last_hour"],
+            "tags": ["Meraki"],
             "type": "vertical_bar_chart",
             "short_description": "Meraki Device Summary",
             "title": "Meraki Device Summary",
-            "id": "meraki_device_bar_chart"
+            "id": "meraki_device_bar_chart",
         }
     elif tile_id == "meraki_security_events":
         return {
-            "description": "Meraki Security Events Summary provides an overview of the number of security events from Meraki Dashboard.",
-            "periods": [
-                "last_hour"
-            ],
-            "tags": [
-                "Meraki"
-            ],
+            "description": "Meraki Security Events Summary provides an overview "
+            "of the number of security events from Meraki Dashboard.",
+            "periods": ["last_hour"],
+            "tags": ["Meraki"],
             "type": "metric_group",
             "short_description": "Meraki Security Event Summary",
             "title": "Meraki Security Event Summary",
-            "id": "meraki_security_events"
+            "id": "meraki_security_events",
         }
     elif tile_id == "meraki_security_events_chart":
         return {
-            "description": "Meraki Security Events provides an overview of the number of security events from Meraki Dashboard.",
-            "periods": [
-                "last_hour",
-                "last_24_hours",
-                "last_7_days",
-                "last_30_days",
-                "last_60_days",
-                "last_90_days"
-            ],
-            "tags": [
-                "Meraki"
-            ],
+            "description": "Meraki Security Events provides an overview "
+            "of the number of security events from Meraki Dashboard.",
+            "periods": ["last_hour", "last_24_hours", "last_7_days", "last_30_days", "last_60_days", "last_90_days"],
+            "tags": ["Meraki"],
             "type": "horizontal_bar_chart",
             "short_description": "Meraki Security Events",
             "title": "Meraki Security Events",
-            "id": "meraki_security_events_chart"
+            "id": "meraki_security_events_chart",
         }
     elif tile_id == "server_image":
         return {
@@ -457,13 +480,11 @@ def get_tile_definition(tile_id):
             "periods": [
                 "last_hour",
             ],
-            "tags": [
-                "UCS"
-            ],
+            "tags": ["UCS"],
             "type": "markdown",
             "short_description": "Server Image Test",
             "title": "Server Overview",
-            "id": "server_image"
+            "id": "server_image",
         }
     elif tile_id == "server_summary":
         return {
@@ -471,13 +492,11 @@ def get_tile_definition(tile_id):
             "periods": [
                 "last_hour",
             ],
-            "tags": [
-                "UCS"
-            ],
+            "tags": ["UCS"],
             "type": "markdown",
             "short_description": "Server Summary Test",
             "title": "Server Summary",
-            "id": "server_summary"
+            "id": "server_summary",
         }
     elif tile_id == "server_specs":
         return {
@@ -485,13 +504,11 @@ def get_tile_definition(tile_id):
             "periods": [
                 "last_hour",
             ],
-            "tags": [
-                "UCS"
-            ],
+            "tags": ["UCS"],
             "type": "markdown",
             "short_description": "Server Spec Test",
             "title": "Server Specs",
-            "id": "server_specs"
+            "id": "server_specs",
         }
     elif tile_id == "server_events":
         return {
@@ -499,22 +516,33 @@ def get_tile_definition(tile_id):
             "periods": [
                 "last_hour",
             ],
-            "tags": [
-                "UCS"
-            ],
+            "tags": ["UCS"],
             "type": "markdown",
             "short_description": "Server Events Test",
             "title": "Server Events",
-            "id": "server_events"
+            "id": "server_events",
         }
     return {}
 
 
-@dashboard_api.route('/tiles', methods=['POST'])
+@dashboard_api.route("/tiles", methods=["POST"])
 def get_tiles():
     tiles = []
-    # tile_definitions = ["meraki_device_summary", "meraki_device_summary_by_type", "meraki_security_events", "meraki_device_bar_chart", "meraki_security_events_chart"]
-    # tile_definitions = ["meraki_device_bar_chart", "meraki_security_events_chart", "server_image", "server_summary", "server_specs", "server_events"]
+    # tile_definitions = [
+    #     "meraki_device_summary",
+    #     "meraki_device_summary_by_type",
+    #     "meraki_security_events",
+    #     "meraki_device_bar_chart",
+    #     "meraki_security_events_chart",
+    # ]
+    # tile_definitions = [
+    #     "meraki_device_bar_chart",
+    #     "meraki_security_events_chart",
+    #     "server_image",
+    #     "server_summary",
+    #     "server_specs",
+    #     "server_events",
+    # ]
     tile_definitions = ["meraki_device_bar_chart", "meraki_security_events_chart"]
     for t in tile_definitions:
         tiles.append(get_tile_definition(t))
@@ -522,7 +550,7 @@ def get_tiles():
     return jsonify_data(tiles)
 
 
-@dashboard_api.route('/tiles/tile', methods=['POST'])
+@dashboard_api.route("/tiles/tile", methods=["POST"])
 def get_tiles_tile():
     json_data = request.json
     tid = json_data.get("tile_id")
@@ -534,7 +562,7 @@ def get_tiles_tile():
     return jsonify_data(tile)
 
 
-@dashboard_api.route('/tiles/tile-data', methods=['POST'])
+@dashboard_api.route("/tiles/tile-data", methods=["POST"])
 def get_tile_data():
     json_data = request.json
     tid = json_data.get("tile_id")
@@ -545,16 +573,13 @@ def get_tile_data():
     ct = datetime.datetime.utcnow()
     tile_base = {
         "valid_time": {
-            "start_time": ct.isoformat() + 'Z',
-            "end_time": (ct + datetime.timedelta(minutes=1)).isoformat() + 'Z'
+            "start_time": ct.isoformat() + "Z",
+            "end_time": (ct + datetime.timedelta(minutes=1)).isoformat() + "Z",
         },
-        "observed_time": {
-            "start_time": ct.isoformat() + 'Z',
-            "end_time": ct.isoformat() + 'Z'
-        },
+        "observed_time": {"start_time": ct.isoformat() + "Z", "end_time": ct.isoformat() + "Z"},
         "cache_scope": "org",
         "period": "last_hour",
-        "data": tile_data
+        "data": tile_data,
     }
 
     if tile_extras:

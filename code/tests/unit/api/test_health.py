@@ -6,10 +6,10 @@ from .utils import get_headers
 
 
 def routes():
-    yield '/health'
+    yield "/health"
 
 
-@fixture(scope='module', params=routes(), ids=lambda route: f'POST {route}')
+@fixture(scope="module", params=routes(), ids=lambda route: f"POST {route}")
 def route(request):
     return request.param
 
