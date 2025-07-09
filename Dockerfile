@@ -1,7 +1,7 @@
 FROM alpine:3.14
 LABEL maintainer="Ian Redden <iaredden@cisco.com>"
 
-ENV PIP_IGNORE_INSTALLED 1
+ENV PIP_IGNORE_INSTALLED=1
 
 # install packages we need
 RUN apk update && apk add --no-cache musl-dev openssl-dev gcc py3-configobj \
